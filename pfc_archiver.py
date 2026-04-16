@@ -236,6 +236,13 @@ def export_partition_to_pfc(
                             val = val.hex()
                         row_dict[col] = val
 
+                    # Ensure pfc_jsonl can build its timestamp index.
+                    # pfc_jsonl recognises "timestamp" / "@timestamp" — not
+                    # arbitrary column names.  Add "timestamp" as alias so
+                    # pfc_jsonl query / s3-fetch --from --to work correctly.
+                    if ts_col in row_dict and "timestamp" not in row_dict:
+                        row_dict["timestamp"] = row_dict[ts_col]
+
                     line = json.dumps(row_dict, ensure_ascii=False) + "\n"
                     fout.write(line)
                     jsonl_bytes += len(line.encode("utf-8"))
