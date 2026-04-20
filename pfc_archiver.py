@@ -35,6 +35,7 @@ import argparse
 import json
 import logging
 import os
+import shutil
 import signal
 import subprocess
 import sys
@@ -42,6 +43,11 @@ import tempfile
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+
+try:
+    import psycopg2
+except ImportError:
+    psycopg2 = None
 
 # ---------------------------------------------------------------------------
 # Logging setup
@@ -95,9 +101,7 @@ def load_config(path: str) -> dict:
 
 def _connect(db_cfg: dict):
     """Create a psycopg2 connection from [db] config section."""
-    try:
-        import psycopg2
-    except ImportError:
+    if psycopg2 is None:
         log.error("psycopg2 not installed. Run: pip install psycopg2-binary")
         sys.exit(1)
 
@@ -322,20 +326,23 @@ def upload_archive(local_pfc: Path, archive_cfg: dict, dry_run: bool = False) ->
     local_bidx = Path(str(local_pfc) + ".bidx")
 
     if dest.startswith("s3://"):
-        # S3 upload
-        try:
-            import boto3
-        except ImportError:
-            log.error("boto3 required for S3 upload: pip install boto3")
-            raise
-
-        # Parse s3://bucket/prefix
+        # S3 upload — parse bucket/prefix first so dry_run can log the target
         s3_path   = dest[5:]
         bucket, _, prefix = s3_path.partition("/")
         prefix = prefix.rstrip("/")
 
         key_pfc  = f"{prefix}/{local_pfc.name}"  if prefix else local_pfc.name
         key_bidx = f"{prefix}/{local_bidx.name}" if prefix else local_bidx.name
+
+        if dry_run:
+            log.info(f"  [DRY-RUN] would upload: s3://{bucket}/{key_pfc}")
+            return True
+
+        try:
+            import boto3
+        except ImportError:
+            log.error("boto3 required for S3 upload: pip install boto3")
+            raise
 
         kwargs = {}
         if archive_cfg.get("s3_region"):
@@ -345,10 +352,6 @@ def upload_archive(local_pfc: Path, archive_cfg: dict, dry_run: bool = False) ->
         if archive_cfg.get("s3_access_key"):
             kwargs["aws_access_key_id"]     = archive_cfg["s3_access_key"]
             kwargs["aws_secret_access_key"] = archive_cfg["s3_secret_key"]
-
-        if dry_run:
-            log.info(f"  [DRY-RUN] would upload: s3://{bucket}/{key_pfc}")
-            return True
 
         s3 = boto3.client("s3", **kwargs)
         log.info(f"  Uploading s3://{bucket}/{key_pfc} ...")
@@ -367,7 +370,6 @@ def upload_archive(local_pfc: Path, archive_cfg: dict, dry_run: bool = False) ->
             log.info(f"  [DRY-RUN] would copy to: {dest_dir}")
             return True
 
-        import shutil
         shutil.copy2(local_pfc, dest_dir / local_pfc.name)
         if local_bidx.exists():
             shutil.copy2(local_bidx, dest_dir / local_bidx.name)
@@ -630,7 +632,6 @@ def main():
     # Locate pfc_jsonl binary
     pfc_binary = args.pfc_binary
     if not pfc_binary:
-        import shutil
         pfc_binary = shutil.which("pfc_jsonl") or "/usr/local/bin/pfc_jsonl"
     if not os.path.isfile(pfc_binary):
         log.error(
