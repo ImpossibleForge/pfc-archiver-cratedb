@@ -499,7 +499,12 @@ def archive_cycle(cfg: dict, pfc_binary: str, dry_run: bool = False):
     log_dir         = arch_cfg.get("log_dir", "./archive_logs")
 
     # Step 1: find partitions
-    partitions = get_partition_ranges(db_cfg, retention_days, partition_days)
+    try:
+        partitions = get_partition_ranges(db_cfg, retention_days, partition_days)
+    except Exception as exc:
+        log.error(f"Scan failed — could not query database: {exc}")
+        return
+
     if not partitions:
         log.info("No partitions to archive — sleeping until next cycle")
         return
