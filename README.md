@@ -1,9 +1,9 @@
-# pfc-archiver — Autonomous archive daemon for CrateDB
+# pfc-archiver-cratedb — Autonomous archive daemon for CrateDB
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
 [![PFC-JSONL](https://img.shields.io/badge/PFC--JSONL-v3.4-green.svg)](https://github.com/ImpossibleForge/pfc-jsonl)
-[![Version](https://img.shields.io/badge/pfc--archiver-v0.1.0-brightgreen.svg)](https://github.com/ImpossibleForge/pfc-archiver/releases)
+[![Version](https://img.shields.io/badge/pfc--archiver--cratedb-v0.1.0-brightgreen.svg)](https://github.com/ImpossibleForge/pfc-archiver-cratedb/releases)
 
 A standalone daemon that runs alongside CrateDB, watches for data older than a configurable retention window, compresses it to PFC format, and writes it to local storage or S3 — automatically.
 
@@ -13,7 +13,7 @@ A standalone daemon that runs alongside CrateDB, watches for data older than a c
 
 ## How it works
 
-Every `interval_seconds` (default: 3600), pfc-archiver runs one archive cycle:
+Every `interval_seconds` (default: 3600), pfc-archiver-cratedb runs one archive cycle:
 
 ```
 SCAN  ->  EXPORT  ->  COMPRESS  ->  UPLOAD  ->  VERIFY  ->  (optional DELETE)  ->  LOG
@@ -40,11 +40,11 @@ SCAN  ->  EXPORT  ->  COMPRESS  ->  UPLOAD  ->  VERIFY  ->  (optional DELETE)  -
 ## Install
 
 ```bash
-pip install pfc-archiver
+pip install pfc-archiver-cratedb
 
 # Or from source
-git clone https://github.com/ImpossibleForge/pfc-archiver
-cd pfc-archiver
+git clone https://github.com/ImpossibleForge/pfc-archiver-cratedb
+cd pfc-archiver-cratedb
 pip install -r requirements.txt
 ```
 
@@ -165,14 +165,14 @@ Each completed cycle appends a JSON entry to `<log_dir>/archive_<YYYYMMDD>.log`:
 
 ```ini
 [Unit]
-Description=pfc-archiver — PFC archive daemon for CrateDB
+Description=pfc-archiver-cratedb — PFC archive daemon for CrateDB
 After=network.target
 
 [Service]
 Type=simple
 User=pfc
-WorkingDirectory=/opt/pfc-archiver
-ExecStart=/usr/bin/python3 /opt/pfc-archiver/pfc_archiver.py --config /etc/pfc-archiver/cratedb.toml
+WorkingDirectory=/opt/pfc-archiver-cratedb
+ExecStart=/usr/bin/python3 /opt/pfc-archiver-cratedb/pfc_archiver.py --config /etc/pfc-archiver-cratedb/cratedb.toml
 Restart=on-failure
 RestartSec=60
 
@@ -181,9 +181,9 @@ WantedBy=multi-user.target
 ```
 
 ```bash
-sudo systemctl enable pfc-archiver
-sudo systemctl start pfc-archiver
-sudo journalctl -u pfc-archiver -f
+sudo systemctl enable pfc-archiver-cratedb
+sudo systemctl start pfc-archiver-cratedb
+sudo journalctl -u pfc-archiver-cratedb -f
 ```
 
 ---
@@ -197,14 +197,14 @@ services:
     image: crate:latest
     ports: ["4200:4200", "5432:5432"]
 
-  pfc-archiver:
-    image: ghcr.io/impossibleforge/pfc-archiver:latest
+  pfc-archiver-cratedb:
+    image: ghcr.io/impossibleforge/pfc-archiver-cratedb:latest
     volumes:
-      - ./config/cratedb.toml:/etc/pfc-archiver/config.toml
+      - ./config/cratedb.toml:/etc/pfc-archiver-cratedb/config.toml
       - ./archives:/archives
       - ./archive_logs:/logs
     environment:
-      - PFC_CONFIG=/etc/pfc-archiver/config.toml
+      - PFC_CONFIG=/etc/pfc-archiver-cratedb/config.toml
     depends_on: [cratedb]
 ```
 
@@ -212,7 +212,7 @@ services:
 
 ## Deleting archived data
 
-`delete_after_archive = false` by default — pfc-archiver never modifies your CrateDB without explicit opt-in.
+`delete_after_archive = false` by default — pfc-archiver-cratedb never modifies your CrateDB without explicit opt-in.
 
 After confirming your archives are accessible via DuckDB, set `delete_after_archive = true` and restart. Only partitions that pass the row-count verify step will be deleted.
 
@@ -264,6 +264,6 @@ FROM read_pfc_jsonl(
 
 ## License
 
-MIT — see [LICENSE](https://github.com/ImpossibleForge/pfc-archiver/blob/main/LICENSE).
+MIT — see [LICENSE](https://github.com/ImpossibleForge/pfc-archiver-cratedb/blob/main/LICENSE).
 
 *Built by [ImpossibleForge](https://github.com/ImpossibleForge)*
