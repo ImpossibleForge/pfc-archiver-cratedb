@@ -51,9 +51,17 @@ pip install -r requirements.txt
 **The `pfc_jsonl` binary must be installed:**
 
 ```bash
+# Linux x64:
 curl -L https://github.com/ImpossibleForge/pfc-jsonl/releases/latest/download/pfc_jsonl-linux-x64 \
      -o /usr/local/bin/pfc_jsonl && chmod +x /usr/local/bin/pfc_jsonl
+
+# macOS (Apple Silicon M1–M4):
+curl -L https://github.com/ImpossibleForge/pfc-jsonl/releases/latest/download/pfc_jsonl-macos-arm64 \
+     -o /usr/local/bin/pfc_jsonl && chmod +x /usr/local/bin/pfc_jsonl
 ```
+
+> **macOS Intel (x64):** Binary coming soon.
+> **Windows:** No native binary. Use WSL2 or a Linux machine.
 
 **Python dependency for CrateDB:**
 
