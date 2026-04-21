@@ -261,6 +261,7 @@ FROM read_pfc_jsonl(
 | [pfc-duckdb](https://github.com/ImpossibleForge/pfc-duckdb) | DuckDB Community Extension (`INSTALL pfc FROM community`) |
 | [pfc-migrate](https://github.com/ImpossibleForge/pfc-migrate) | One-shot CrateDB export and JSONL archive conversion |
 | [pfc-fluentbit](https://github.com/ImpossibleForge/pfc-fluentbit) | Fluent Bit -> PFC forwarder for live pipelines |
+| [pfc-vector](https://github.com/ImpossibleForge/pfc-vector) | High-performance Rust ingest daemon for Vector.dev and Telegraf |
 
 ---
 
