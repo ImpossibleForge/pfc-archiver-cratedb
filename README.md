@@ -267,6 +267,12 @@ FROM read_pfc_jsonl(
 
 ---
 
+
+---
+
+## Disclaimer
+
+PFC-Archiver-CrateDB is an independent open-source project and is not affiliated with, endorsed by, or associated with Crate.io or CrateDB.
 ## License
 
 MIT — see [LICENSE](https://github.com/ImpossibleForge/pfc-archiver-cratedb/blob/main/LICENSE).
