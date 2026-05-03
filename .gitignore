@@ -30,3 +30,5 @@ my_*.toml
 *_alldb.toml
 *_cratedb.md
 *_alldb.md
+
+.env
