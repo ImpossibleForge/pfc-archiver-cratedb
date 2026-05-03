@@ -9,8 +9,6 @@ A standalone daemon that runs alongside CrateDB, watches for data older than a c
 
 **Runs as a sidecar or cron job — no schema changes, no plugins, no database modifications.**
 
-> **QuestDB?** Use [pfc-archiver-questdb](https://github.com/ImpossibleForge/pfc-archiver-questdb) — same concept, built for QuestDB's partition model.
-
 ---
 
 ## How it works
