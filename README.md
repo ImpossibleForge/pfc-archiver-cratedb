@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
-[![PFC-JSONL](https://img.shields.io/badge/PFC--JSONL-v3.4-green.svg)](https://github.com/ImpossibleForge/pfc-jsonl)
+[![PFC-JSONL](https://img.shields.io/badge/PFC--JSONL-green.svg)](https://github.com/ImpossibleForge/pfc-jsonl)
 [![Version](https://img.shields.io/badge/pfc--archiver--cratedb-v0.2.1-brightgreen.svg)](https://github.com/ImpossibleForge/pfc-archiver-cratedb/releases)
 
 A standalone daemon that runs alongside CrateDB, watches for data older than a configurable retention window, compresses it to PFC format, and writes it to local storage or S3.
